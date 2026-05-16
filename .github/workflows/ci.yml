@@ -1,0 +1,31 @@
+name: CI
+
+# Runs unit tests on every push & PR (Linux is fine — UI code isn't exercised here).
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pytest
+          # Headless PySide isn't needed — we don't import UI modules in tests.
+
+      - name: Run tests
+        env:
+          PYTHONPATH: src
+        run: pytest tests/ -v

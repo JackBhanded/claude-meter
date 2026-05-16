@@ -1,0 +1,52 @@
+name: Release
+
+# Builds the .exe whenever a tag like ``v0.1.0`` is pushed.
+# The artifact is attached to a GitHub Release named after that tag.
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Build .exe with PyInstaller
+        run: pyinstaller build.spec --clean --noconfirm
+
+      - name: Smoke-test imports
+        run: python -c "import sys; sys.path.insert(0,'src'); import claude_usage_widget.usage, claude_usage_widget.pricing, claude_usage_widget.history, claude_usage_widget.notifications"
+
+      - name: Run unit tests
+        run: pytest tests/ -v
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClaudeMeter-win-x64
+          path: dist/ClaudeMeter.exe
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/ClaudeMeter.exe
+          generate_release_notes: true

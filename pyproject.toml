@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "claude-meter"
+version = "0.1.0"
+description = "Windows taskbar widget showing every quota from claude.ai/settings/usage — Current session, Weekly per-model, Opus, Claude Design, routine runs, overage."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Jack Bhanded" }]
+requires-python = ">=3.10"
+dependencies = [
+    "PySide6>=6.6.0",
+    "requests>=2.31.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4.0", "pyinstaller>=6.0.0"]
+
+[project.scripts]
+claude-usage-widget = "claude_usage_widget.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
