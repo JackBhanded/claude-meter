@@ -17,7 +17,9 @@ from typing import List, Optional
 
 from PySide6.QtCore import QEvent, QPoint, QRect, Qt, QTimer, Signal
 from PySide6.QtGui import (
+    QAction,
     QColor,
+    QContextMenuEvent,
     QFont,
     QFontMetrics,
     QGuiApplication,
@@ -26,7 +28,7 @@ from PySide6.QtGui import (
     QPainterPath,
     QPen,
 )
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QMenu, QWidget
 
 from . import fullscreen, history, icons, products, theme
 from .claude_logo import draw_claude_asterisk
@@ -59,6 +61,8 @@ class UsageWidget(QWidget):
 
     clicked = Signal()
     refresh_requested = Signal()
+    settings_requested = Signal()
+    quit_requested = Signal()
 
     def __init__(self, settings: Settings, parent=None):
         super().__init__(
@@ -83,6 +87,9 @@ class UsageWidget(QWidget):
         self._refresh_hover = False
         self._last_refresh_click: float = 0.0   # monotonic seconds
         self._refresh_pending_until: float = 0.0  # show "Refreshing…" until this time
+        # When True, the user dismissed the widget via right-click → Hide. The
+        # auto-show visibility tick respects this; only manual_show() clears it.
+        self._manually_hidden = False
 
         self._tooltip = TooltipPanel()
 
@@ -128,6 +135,10 @@ class UsageWidget(QWidget):
         self.move(max(avail.left(), x), max(avail.top(), y))
 
     def _update_visibility(self) -> None:
+        # If the user explicitly dismissed it, keep it hidden until they
+        # bring it back from the tray menu.
+        if self._manually_hidden:
+            return
         if not self._settings.hide_when_fullscreen:
             if not self.isVisible():
                 self.show()
@@ -296,6 +307,52 @@ class UsageWidget(QWidget):
         if was != self._refresh_hover:
             self.update()
 
+    # ------------------------------------------------------------------
+    # Right-click menu — Hide / Refresh / Settings
+    # ------------------------------------------------------------------
+    def contextMenuEvent(self, event: QContextMenuEvent) -> None:
+        menu = QMenu(self)
+
+        hide_action = QAction("Hide widget", menu)
+        hide_action.triggered.connect(self.manual_hide)
+        menu.addAction(hide_action)
+
+        refresh_action = QAction("Refresh now", menu)
+        refresh_action.triggered.connect(self.refresh_requested.emit)
+        menu.addAction(refresh_action)
+
+        menu.addSeparator()
+
+        settings_action = QAction("Settings…", menu)
+        settings_action.triggered.connect(self.settings_requested.emit)
+        menu.addAction(settings_action)
+
+        menu.addSeparator()
+
+        quit_action = QAction("Quit Claude Meter", menu)
+        quit_action.triggered.connect(self.quit_requested.emit)
+        menu.addAction(quit_action)
+
+        # Hide the tooltip while the menu is open so they don't overlap.
+        if self._tooltip.isVisible():
+            self._tooltip.hide()
+
+        menu.exec(event.globalPos())
+
+    def manual_hide(self) -> None:
+        """User dismissed the widget. Tray icon brings it back."""
+        self._manually_hidden = True
+        if self._tooltip.isVisible():
+            self._tooltip.hide()
+        self.hide()
+
+    def manual_show(self) -> None:
+        """User re-summoned the widget from the tray."""
+        self._manually_hidden = False
+        self.show()
+        self.reposition()
+
+    # ------------------------------------------------------------------
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() != Qt.MouseButton.LeftButton:
             return

@@ -53,6 +53,8 @@ class WidgetApp(QObject):
         self.poller.start()
 
         self.widget.refresh_requested.connect(self._force_refresh)
+        self.widget.settings_requested.connect(self._open_settings)
+        self.widget.quit_requested.connect(self._quit)
 
     # ------------------------------------------------------------------
     def _on_snapshot(self, snap: UsageSnapshot) -> None:
@@ -153,11 +155,12 @@ class WidgetApp(QObject):
         return "\n".join(lines)
 
     def _toggle_widget(self) -> None:
+        # Tray menu → Show widget. Uses manual_show/hide so the visibility
+        # tick respects the user's choice.
         if self.widget.isVisible():
-            self.widget.hide()
+            self.widget.manual_hide()
         else:
-            self.widget.show()
-            self.widget.reposition()
+            self.widget.manual_show()
 
     def _force_refresh(self) -> None:
         self.poller.request_refresh()
