@@ -135,7 +135,18 @@ Standing on the shoulders of giants. Big thank you to:
 
 ## About the author
 
+<table>
+<tr>
+<td width="120" valign="top">
+<img src="https://www.SawYouAtSinai.com/_layouts/images/team/jackbio.jpg" width="100" alt="Jack Bhanded">
+</td>
+<td valign="top">
+
 Built by **[Jack Bhanded](https://www.sawyouatsinai.com/jewish-dating-team.aspx)**, Lead developer and architect at [SawYouAtSinai](https://www.sawyouatsinai.com). Devotee of innovative technologies and gadgets. Built this because he uses Claude Code daily and wanted to know how much quota was left without leaving the editor.
+
+</td>
+</tr>
+</table>
 
 ## License
 
