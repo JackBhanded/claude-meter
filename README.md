@@ -148,6 +148,10 @@ Built by **[Jack Bhanded](https://www.sawyouatsinai.com/jewish-dating-team.aspx)
 </tr>
 </table>
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for the version-by-version list of changes.
+
 ## License
 
 [MIT](LICENSE) — do whatever you want, just keep the copyright notice.
