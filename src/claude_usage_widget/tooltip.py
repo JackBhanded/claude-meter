@@ -176,13 +176,41 @@ class TooltipPanel(QWidget):
 
     # ------------------------------------------------------------------
     def show_near(self, global_anchor: QPoint) -> None:
+        """Place the tooltip so it never visually overlaps the pinned ticker.
+
+        Strategy:
+          1. Try ABOVE the anchor (default — clean, conventional).
+          2. If that won't fit on the screen, place LEFT of the anchor.
+          3. If left won't fit either, place RIGHT.
+          4. Final clamp so the tooltip is fully on-screen.
+        """
         screen = self.screen()
         avail = screen.availableGeometry() if screen else None
-        x = global_anchor.x() - self.width() // 2
-        y = global_anchor.y() - self.height() - 10
+
+        w = self.width()
+        h = self.height()
+        # Approximate half-width of the pinned ticker. Tooltip should leave
+        # at least this much room around the anchor when placed side-by-side.
+        widget_half_w = 120
+        gap = 12
+
+        # Strategy 1 — above the widget (the default visual layout)
+        x = global_anchor.x() - w // 2
+        y = global_anchor.y() - h - 10
+
         if avail is not None:
-            x = max(avail.left() + 4, min(x, avail.right() - self.width() - 4))
-            y = max(avail.top() + 4, y)
+            if y < avail.top() + 4:
+                # Won't fit above — try to the LEFT of the ticker
+                x = global_anchor.x() - widget_half_w - w - gap
+                y = global_anchor.y() - h + 30        # bottom-align roughly
+                if x < avail.left() + 4:
+                    # Won't fit left either — go RIGHT of the ticker
+                    x = global_anchor.x() + widget_half_w + gap
+
+            # Final clamp to keep the whole tooltip on-screen
+            x = max(avail.left() + 4, min(x, avail.right() - w - 4))
+            y = max(avail.top() + 4, min(y, avail.bottom() - h - 4))
+
         self.move(x, y)
         self.show()
 

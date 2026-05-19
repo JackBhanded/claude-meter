@@ -46,6 +46,17 @@ Anthropic gives you a usage allowance but no built-in dashboard. You hit a limit
 
 If you've ever logged in with the [Claude Code CLI](https://claude.com/claude-code) on this machine — that's it, you're done. Otherwise: **Settings…** in the tray menu, paste an `sk-ant-api…` key from `console.anthropic.com`.
 
+### First-launch SmartScreen warning
+
+Windows may show *"Windows protected your PC"* the first time you run `ClaudeMeter.exe`. That's because this binary isn't code-signed (code-signing certificates are $200–400/year, not currently in scope for a hobby project). The code is open-source — you can read every line and rebuild it yourself if you want.
+
+To run it anyway:
+
+1. Click the small **"More info"** link on the SmartScreen dialog
+2. Click the **"Run anyway"** button that appears
+
+Windows trusts it on subsequent launches.
+
 ## How it differs from the alternatives
 
 There are several great Windows widgets out there. Here's an honest comparison:

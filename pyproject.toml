@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "claude-meter"
-version = "0.1.2"
+version = "0.1.3"
 description = "Windows taskbar widget showing every quota from claude.ai/settings/usage — Current session, Weekly per-model, Opus, Claude Design, routine runs, overage."
 readme = "README.md"
 license = { text = "MIT" }
