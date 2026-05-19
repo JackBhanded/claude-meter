@@ -174,6 +174,7 @@ class WidgetApp(QObject):
         settings_mod.save(new_settings)
         self.notifier = notifications.ThresholdNotifier(self.settings.notify_at_thresholds)
         self.widget.reposition()
+        self.widget.apply_visual_settings()
         self.poller.request_refresh()
 
     def _quit(self) -> None:

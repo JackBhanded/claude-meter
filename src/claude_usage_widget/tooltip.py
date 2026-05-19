@@ -18,6 +18,7 @@ from PySide6.QtWidgets import QWidget
 from . import history, products, theme
 from .claude_logo import draw_claude_asterisk
 from .usage import CountQuota, Overage, Quota, UsageSnapshot
+from .win32_glass import try_enable_glass_backdrop
 
 
 PAD = 18
@@ -40,7 +41,21 @@ class TooltipPanel(QWidget):
         self._snapshot: Optional[UsageSnapshot] = None
         self._buckets: list[history.Bucket] = []
         self._products: List[products.DetectedProduct] = []
+        self._glass_enabled = False
         self.resize(400, 240)
+
+    # ------------------------------------------------------------------
+    def set_glass_enabled(self, enabled: bool) -> None:
+        """Toggle the frosted-glass backdrop request. Applies on next show
+        (and immediately if currently visible)."""
+        self._glass_enabled = enabled
+        if enabled and self.isVisible():
+            try_enable_glass_backdrop(int(self.winId()))
+
+    def showEvent(self, event) -> None:
+        super().showEvent(event)
+        if self._glass_enabled:
+            try_enable_glass_backdrop(int(self.winId()))
 
     # ------------------------------------------------------------------
     def update_data(

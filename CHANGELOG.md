@@ -7,24 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Codex CLI subscription usage support (v0.2 roadmap) — track `~/.codex/auth.json` alongside Claude
+- OpenAI Codex CLI subscription usage support (v0.2 roadmap) — track `~/.codex/auth.json` alongside Claude
 
 ## [0.1.2] — 2026-05-19
 
-### Added
-- **Hide for 15 min** snooze option in the right-click menu — temporarily dismiss the ticker, auto-shows after the configured timeout
-- **Frosted-glass backdrop** on Windows 11 (Acrylic) — default for that "futuristic glass" look, falls back gracefully on Windows 10
-- **Opacity slider** in Settings (30 – 100%) — pick anywhere from fully translucent to fully solid
-- **Snooze duration** setting — customize how long "Hide for N min" hides the widget
-
-### Fixed
-- Initialization order bug where opacity was applied before the tooltip existed (caught immediately on v0.1.2, fixed in v0.1.3)
-
-## [0.1.1] — 2026-05-16
+First feature drop after the initial release. Adds a right-click menu, a snooze option, and a glassy-by-default look.
 
 ### Added
-- **Right-click menu** on the pinned ticker itself — `Hide widget`, `Refresh now`, `Settings…`, `Quit Claude Meter`
-- "Manually hidden" state — once you dismiss the widget, it stays hidden until you bring it back from the tray menu (no more auto-show overrides)
+- **Right-click menu on the pinned ticker** — `Hide widget`, `Hide for 15 min`, `Refresh now`, `Settings…`, `Quit Claude Meter`
+- **"Hide for 15 min" snooze** — temporarily dismiss the widget; auto-shows after the configured timeout (range 1 – 240 min, set in Settings)
+- **Frosted-glass backdrop** on Windows 11 (Acrylic) — for a "futuristic glass" feel; gracefully falls back to a slight window opacity on Windows 10
+- **Opacity slider** in Settings (30 – 100%) — go from very translucent to fully solid
+- **Snooze duration** setting — control how long "Hide for N min" hides the widget
+- "Manually hidden" state — the visibility tick now respects a user dismissal instead of auto-showing a second later
 
 ## [0.1.0] — 2026-05-16
 
@@ -44,6 +39,5 @@ Initial public release.
 - Auto-detects Claude Code OAuth credentials from `~/.claude/.credentials.json` (Windows + WSL)
 
 [Unreleased]: https://github.com/JackBhanded/claude-meter/compare/v0.1.2...HEAD
-[0.1.2]: https://github.com/JackBhanded/claude-meter/compare/v0.1.1...v0.1.2
-[0.1.1]: https://github.com/JackBhanded/claude-meter/compare/v0.1.0...v0.1.1
+[0.1.2]: https://github.com/JackBhanded/claude-meter/compare/v0.1.0...v0.1.2
 [0.1.0]: https://github.com/JackBhanded/claude-meter/releases/tag/v0.1.0

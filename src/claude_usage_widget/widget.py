@@ -35,6 +35,7 @@ from .claude_logo import draw_claude_asterisk
 from .settings import Settings
 from .tooltip import TooltipPanel
 from .usage import Quota, UsageSnapshot
+from .win32_glass import try_enable_glass_backdrop
 
 
 # Dimensions tuned for breathing room. The ticker is a premium status pill,
@@ -90,8 +91,15 @@ class UsageWidget(QWidget):
         # When True, the user dismissed the widget via right-click → Hide. The
         # auto-show visibility tick respects this; only manual_show() clears it.
         self._manually_hidden = False
+        # Snooze timer: when the user picks "Hide for 15 min", this fires
+        # manual_show() automatically.
+        self._snooze_timer: Optional[QTimer] = None
 
         self._tooltip = TooltipPanel()
+
+        # Apply visual settings (opacity, glass backdrop). Must come AFTER
+        # ``_tooltip`` is created because it propagates settings to it.
+        self.apply_visual_settings()
 
         self._tick = QTimer(self)
         self._tick.setInterval(30_000)
@@ -317,6 +325,11 @@ class UsageWidget(QWidget):
         hide_action.triggered.connect(self.manual_hide)
         menu.addAction(hide_action)
 
+        snooze_minutes = max(1, int(self._settings.snooze_minutes))
+        snooze_action = QAction(f"Hide for {snooze_minutes} min", menu)
+        snooze_action.triggered.connect(lambda: self.manual_snooze(snooze_minutes))
+        menu.addAction(snooze_action)
+
         refresh_action = QAction("Refresh now", menu)
         refresh_action.triggered.connect(self.refresh_requested.emit)
         menu.addAction(refresh_action)
@@ -349,8 +362,45 @@ class UsageWidget(QWidget):
     def manual_show(self) -> None:
         """User re-summoned the widget from the tray."""
         self._manually_hidden = False
+        self._cancel_snooze()
         self.show()
         self.reposition()
+
+    def manual_snooze(self, minutes: int) -> None:
+        """Hide the widget AND schedule auto-show after ``minutes``."""
+        self._manually_hidden = True
+        if self._tooltip.isVisible():
+            self._tooltip.hide()
+        self.hide()
+        self._cancel_snooze()
+        self._snooze_timer = QTimer(self)
+        self._snooze_timer.setSingleShot(True)
+        self._snooze_timer.timeout.connect(self.manual_show)
+        self._snooze_timer.start(max(1, minutes) * 60 * 1000)
+
+    def _cancel_snooze(self) -> None:
+        if self._snooze_timer is not None:
+            self._snooze_timer.stop()
+            self._snooze_timer.deleteLater()
+            self._snooze_timer = None
+
+    def apply_visual_settings(self) -> None:
+        """Apply opacity + glass backdrop from current settings. Safe to call
+        repeatedly (e.g. after the Settings dialog closes)."""
+        opacity = max(0.30, min(1.0, float(self._settings.opacity)))
+        self.setWindowOpacity(opacity)
+        self._tooltip.setWindowOpacity(opacity)
+        self._tooltip.set_glass_enabled(self._settings.enable_glass_backdrop)
+        # Apply glass NOW for the pinned widget (only effective if visible).
+        if self._settings.enable_glass_backdrop and self.isVisible():
+            try_enable_glass_backdrop(int(self.winId()))
+
+    # ------------------------------------------------------------------
+    def showEvent(self, event) -> None:
+        super().showEvent(event)
+        # winId() is reliably valid once the window has been shown.
+        if self._settings.enable_glass_backdrop:
+            try_enable_glass_backdrop(int(self.winId()))
 
     # ------------------------------------------------------------------
     def mousePressEvent(self, event: QMouseEvent) -> None:

@@ -28,6 +28,11 @@ class Settings:
     # Position offset from bottom-right of primary screen (pixels)
     pos_offset_right: int = 220
     pos_offset_bottom: int = 6
+    # Glass / opacity
+    opacity: float = 0.92                  # whole-window opacity (0.5 = very translucent, 1.0 = solid)
+    enable_glass_backdrop: bool = True     # request Win11 Acrylic backdrop (graceful fallback)
+    # Snooze duration in minutes for the right-click "Hide for N min" action.
+    snooze_minutes: int = 15
 
 
 def settings_path() -> Path:

@@ -86,6 +86,23 @@ class SettingsDialog(QDialog):
         self.offset_bottom_spin.setValue(settings.pos_offset_bottom)
         form.addRow("Offset from taskbar:", self.offset_bottom_spin)
 
+        self.opacity_spin = QSpinBox(self)
+        self.opacity_spin.setRange(30, 100)
+        self.opacity_spin.setSuffix(" %")
+        self.opacity_spin.setSingleStep(5)
+        self.opacity_spin.setValue(int(round(settings.opacity * 100)))
+        form.addRow("Widget opacity:", self.opacity_spin)
+
+        self.glass_check = QCheckBox("Frosted-glass backdrop (Windows 11)", self)
+        self.glass_check.setChecked(settings.enable_glass_backdrop)
+        form.addRow("Glass effect:", self.glass_check)
+
+        self.snooze_spin = QSpinBox(self)
+        self.snooze_spin.setRange(1, 240)
+        self.snooze_spin.setSuffix(" min")
+        self.snooze_spin.setValue(settings.snooze_minutes)
+        form.addRow("Snooze duration:", self.snooze_spin)
+
         root.addLayout(form)
 
         note = QLabel(
@@ -113,5 +130,8 @@ class SettingsDialog(QDialog):
         s.hide_when_fullscreen = self.fullscreen_check.isChecked()
         s.pos_offset_right = int(self.offset_right_spin.value())
         s.pos_offset_bottom = int(self.offset_bottom_spin.value())
+        s.opacity = self.opacity_spin.value() / 100.0
+        s.enable_glass_backdrop = self.glass_check.isChecked()
+        s.snooze_minutes = int(self.snooze_spin.value())
         self._on_save(s)
         self.accept()
