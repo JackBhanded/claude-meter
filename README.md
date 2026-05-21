@@ -174,7 +174,7 @@ Built by **[Jack Bhanded](https://www.sawyouatsinai.com/jewish-dating-team.aspx)
 </tr>
 </table>
 
-Part of a small suite of Claude utilities alongside [Claude Lifeboat](https://github.com/JackBhanded/claude-lifeboat) (backup & restore for your Claude data) and [Claude Lifejacket](https://github.com/JackBhanded/claude-lifejacket) (keep every Claude session aware of your projects).
+Part of a small suite of Claude utilities alongside [Claude Lifeboat](https://github.com/JackBhanded/claude-lifeboat) (backup & restore for your Claude data), [Claude Lifejacket](https://github.com/JackBhanded/claude-lifejacket) (keep every Claude session aware of your projects), and [Claude Compass](https://github.com/JackBhanded/claude-compass) (keep every session attuned to how you like to work).
 
 ## Changelog
 

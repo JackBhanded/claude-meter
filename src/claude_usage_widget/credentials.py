@@ -16,10 +16,18 @@ from __future__ import annotations
 import json
 import os
 import subprocess
+import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Optional
+
+
+# Windows: prevent wsl.exe (or any other subprocess) from flashing a black
+# console window when invoked from pythonw.exe / a frozen no-console exe.
+_SUBPROCESS_FLAGS = (
+    subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
+)
 
 
 @dataclass(frozen=True)
@@ -153,6 +161,7 @@ def _list_wsl_distros(wsl_exe: str) -> list[str]:
             capture_output=True,
             timeout=5,
             check=False,
+            creationflags=_SUBPROCESS_FLAGS,
         )
     except (OSError, subprocess.SubprocessError):
         return []
@@ -168,6 +177,7 @@ def _wsl_read(wsl_exe: str, distro: str, posix_path: str) -> Optional[str]:
             capture_output=True,
             timeout=5,
             check=False,
+            creationflags=_SUBPROCESS_FLAGS,
         )
     except (OSError, subprocess.SubprocessError):
         return None

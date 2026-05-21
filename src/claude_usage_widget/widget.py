@@ -231,6 +231,8 @@ class UsageWidget(QWidget):
         # data with the error string when a refresh fails.
         has_data = bool(snap and snap.quotas)
         stale = bool(has_data and snap and not snap.ok and snap.error)
+        # Auth-expired is a *specific* kind of stale that the user can fix.
+        auth_expired = bool(stale and snap and snap.error and "Auth" in snap.error)
 
         if self._refresh_hover and not refreshing:
             p.setBrush(QColor(theme.BORDER))
@@ -248,22 +250,25 @@ class UsageWidget(QWidget):
             stroke_w=1.2,
         )
 
-        # Tiny amber warning dot if the latest refresh failed but we're
-        # still showing data. Sits just left of the refresh glyph.
+        # Tiny warning dot if the latest refresh failed. Amber for generic
+        # transient errors; red for auth-expired (user-actionable).
         if stale:
             warn_x = rx - REFRESH_ICON_SIZE - 6
-            p.setBrush(QColor("#EA580C"))
+            p.setBrush(QColor("#DC2626") if auth_expired else QColor("#EA580C"))
             p.setPen(Qt.PenStyle.NoPen)
             p.drawEllipse(int(warn_x - 3), int(ry - 3), 6, 6)
 
-        # Footer text on the left.
+        # Footer text on the left — prioritise the most informative message.
         if refreshing:
             footer_text = "Refreshing…"
             footer_color = QColor(theme.TEXT_SECONDARY)
             show_clock = False
+        elif auth_expired:
+            # Specific, user-actionable. Stand out with the red/coral color.
+            footer_text = "Session expired — run `claude` to refresh"
+            footer_color = QColor("#DC2626")
+            show_clock = False
         elif stale:
-            # Brief, non-alarming explanation. Counter-countdown still
-            # accurate from cached data so users can see when it'll retry.
             footer_text = "Couldn't refresh · showing last update"
             footer_color = QColor(theme.TEXT_SECONDARY)
             show_clock = False

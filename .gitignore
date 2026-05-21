@@ -32,3 +32,6 @@ desktop.ini
 *.local.json
 .env
 local_test_credentials.json
+
+# Private working journal (never published)
+NOTES.md

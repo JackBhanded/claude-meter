@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - OpenAI Codex CLI subscription usage support (v0.2 roadmap) — track `~/.codex/auth.json` alongside Claude
+- Automatic OAuth token refresh via the `refreshToken` in `~/.claude/.credentials.json` — so the meter survives overnight without requiring you to manually re-run `claude`
+- **Browser cookie auth** (v0.2 roadmap) — read `sessionKey` from Chrome/Edge so browser-only and desktop-app-only users don't have to install the Claude Code CLI
+
+## [0.1.4] — 2026-05-20
+
+### Fixed
+- **`wsl.exe` no longer flashes a console window** on every refresh. Previously, each poll spawned a brief black window because the subprocess was inheriting parent-less console behaviour from `pythonw.exe`. Now uses `CREATE_NO_WINDOW` on all subprocess calls.
+- **Expired OAuth tokens are now visible.** When Anthropic returns 401 (typically overnight when Claude Code hasn't refreshed the token), the widget footer now shows a prominent red **"Session expired — run `claude` to refresh"** message and the warning dot turns red. Previously the widget silently kept showing the stale last-good data with only a subtle amber dot — easy to miss.
 
 ## [0.1.3] — 2026-05-19
 
@@ -44,7 +52,8 @@ Initial public release.
 - Single .exe distribution via PyInstaller — no installer, no admin
 - Auto-detects Claude Code OAuth credentials from `~/.claude/.credentials.json` (Windows + WSL)
 
-[Unreleased]: https://github.com/JackBhanded/claude-meter/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/JackBhanded/claude-meter/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/JackBhanded/claude-meter/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/JackBhanded/claude-meter/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/JackBhanded/claude-meter/compare/v0.1.0...v0.1.2
 [0.1.0]: https://github.com/JackBhanded/claude-meter/releases/tag/v0.1.0
