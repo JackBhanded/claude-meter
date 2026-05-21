@@ -44,7 +44,22 @@ Anthropic gives you a usage allowance but no built-in dashboard. You hit a limit
 2. Drop it in `C:\Tools\` (or anywhere). Double-click.
 3. Right-click the tray icon → **Run at startup** so it's there next reboot.
 
-If you've ever logged in with the [Claude Code CLI](https://claude.com/claude-code) on this machine — that's it, you're done. Otherwise: **Settings…** in the tray menu, paste an `sk-ant-api…` key from `console.anthropic.com`.
+### Prerequisite — Claude Code CLI must be logged in
+
+Claude Meter reads `~/.claude/.credentials.json`, which is written **only** by the [Claude Code CLI](https://claude.com/claude-code) on login. The Claude desktop app and `claude.ai` in the browser use different credential storage that the widget can't read yet (see roadmap).
+
+If you've ever run `claude login` (or just `claude`) on this machine, you're already set. Otherwise:
+
+```cmd
+npm install -g @anthropic-ai/claude-code
+claude
+```
+
+`claude` opens a browser-based login. After you authenticate, it writes the credentials file and the widget picks it up automatically on next refresh. You don't have to actually USE Claude Code for coding — login once and forget it.
+
+If you don't want Node.js, an installer is available at https://claude.com/claude-code that doesn't require it.
+
+> **Browser-only users / desktop-app-only users**: support for reading `sessionKey` from your browser cookies is on the v0.2 roadmap so you won't need to install the CLI just for this widget. For now, the CLI is the path.
 
 ### First-launch SmartScreen warning
 
@@ -158,6 +173,8 @@ Built by **[Jack Bhanded](https://www.sawyouatsinai.com/jewish-dating-team.aspx)
 </td>
 </tr>
 </table>
+
+Part of a small suite of Claude utilities alongside [Claude Lifeboat](https://github.com/JackBhanded/claude-lifeboat) (backup & restore for your Claude data) and [Claude Lifejacket](https://github.com/JackBhanded/claude-lifejacket) (keep every Claude session aware of your projects).
 
 ## Changelog
 
