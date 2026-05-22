@@ -23,20 +23,33 @@ Every quota that lives on `claude.ai/settings/usage` — Current session, Weekly
 
 ---
 
-## Why this exists
+## The problem, in one breath
 
-Anthropic gives you a usage allowance but no built-in dashboard. You hit a limit, you wait, you guess when it resets. Claude.ai has a usage page now — but it's a webpage you have to open. **Claude Meter** puts the same numbers, live, in your peripheral vision.
+Your Claude plan has limits — but Claude doesn't show you how much you've used
+without opening a webpage and going looking. So you hit a wall mid-thought, then
+sit there guessing when it'll reset.
 
-## Highlights
+**Claude Meter** is the fuel gauge for your Claude plan. It sits quietly above
+your taskbar and shows how much you've got left, all the time, so you're never
+surprised.
 
-- **Every quota the usage page shows** — Current session (5h), Weekly · All models (7d), Weekly · Sonnet only, Weekly · Opus only, Weekly · Claude Design, Daily routine runs, plus extra-usage overage. Auto-detects your plan ("Max 5×", "Pro", …).
-- **Tray icon shows the live percentage** — color-coded blue → orange → red. Glance like you'd glance at the clock.
-- **Pinned ticker above the taskbar** — Session + Weekly bars with a reset countdown (`resets in 4h 48m · Sat 2:50 AM`) and a refresh button right on the widget.
-- **Hover for the full breakdown** — every quota row + sparkline of the last 14 days, in a Claude-team-grade light theme with the Claude asterisk.
-- **Resilient** — keeps the last good data on screen when the API rate-limits, with a small amber dot to acknowledge the failure. No more "API rate-limited" wiping your dashboard.
-- **Adaptive polling** — 7 min normal, 20 min idle, exponential back-off on 429. One quick refresh button click; 15-second cooldown so you can't spam.
-- **Auto-detects your credentials** — reads the Claude Code OAuth token from `%USERPROFILE%\.claude\.credentials.json` or WSL's `~/.claude/.credentials.json`. No setup if you've ever run `claude` once.
-- **Single .exe**, no installer, no Python required for end-users. Run-at-startup with one click in the tray menu.
+## What it does
+
+- **Shows everything your usage page shows** — your current session, your weekly
+  totals, and a breakdown per model (Sonnet, Opus, Claude Design), plus your daily
+  runs and any extra-usage. It figures out your plan automatically.
+- **Lives in your tray as a live percentage** — colour-coded green to orange to
+  red, so you can glance at it like the clock.
+- **A little bar above your taskbar** — shows how much is left and counts down to
+  the reset (`resets in 4h 48m`), with a refresh button right there.
+- **Hover for the full picture** — every number, plus a mini-graph of the last two
+  weeks, in a clean Claude-style design.
+- **Doesn't flicker out.** If Claude's servers are busy, it keeps showing your last
+  good numbers (with a small amber dot) instead of going blank.
+- **Checks gently.** It refreshes on its own every few minutes and slows down when
+  you're away, so it never wastes your allowance just by watching.
+- **One file, no install.** Download, double-click, done. Turn on "run at startup"
+  from the tray menu and forget about it.
 
 ## Install (30 seconds)
 
@@ -91,17 +104,15 @@ There are several great Windows widgets out there. Here's an honest comparison:
 
 If you want the absolute smallest binary, **CodeZeno's Rust version is great**. If you want multi-account side-by-side, **Zrnik's** is your tool. **Claude Meter** is for people who want the full `claude.ai/settings/usage` page replicated in their taskbar, with a quiet design that feels like Anthropic could have shipped it.
 
-## How it works
+## How it works (for the curious)
 
-```http
-GET https://api.anthropic.com/api/oauth/usage
-Authorization: Bearer <accessToken from ~/.claude/.credentials.json>
-anthropic-beta: oauth-2025-04-20
-```
+Claude Meter asks Claude's own usage service for the exact same numbers the
+`claude.ai` usage page shows, and lays them out in your taskbar. It reads new
+kinds of usage Anthropic might add later without needing an update.
 
-That single call returns the same JSON the `/settings/usage` page consumes. The widget parses every `{utilization, resets_at}` row it sees and renders them — including new fields Anthropic adds later, without code changes (defensive humanizer for unknown keys).
-
-The endpoint is rate-limit-sensitive, so the poller backs off aggressively (7 min normal, 20 min idle, doubles on 429, cap 60 min). Each probe burns essentially no quota.
+It checks in only every few minutes (and less often when you're idle), so it's
+gentle on your allowance — watching the gauge doesn't cost you anything to speak
+of. The technical details live in [CLAUDE.md](CLAUDE.md) if you want them.
 
 ## Using your own / official logo
 
@@ -174,7 +185,7 @@ Built by **[Jack Bhanded](https://www.sawyouatsinai.com/jewish-dating-team.aspx)
 </tr>
 </table>
 
-Part of a small suite of Claude utilities alongside [Claude Lifeboat](https://github.com/JackBhanded/claude-lifeboat) (backup & restore for your Claude data), [Claude Lifejacket](https://github.com/JackBhanded/claude-lifejacket) (keep every Claude session aware of your projects), and [Claude Compass](https://github.com/JackBhanded/claude-compass) (keep every session attuned to how you like to work).
+Part of a small suite of Claude utilities alongside [Claude Lifeboat](https://github.com/JackBhanded/claude-lifeboat) (backup & restore for your Claude data), [Claude Lifejacket](https://github.com/JackBhanded/claude-lifejacket) (keep every Claude session aware of your projects), [Claude Compass](https://github.com/JackBhanded/claude-compass) (keep every session attuned to how you like to work), and [Claude Parachute](https://github.com/JackBhanded/claude-parachute) (a safety net for the Bash changes Claude Code's /rewind can't see).
 
 ## Changelog
 
