@@ -87,22 +87,34 @@ Windows trusts it on subsequent launches.
 
 ## How it differs from the alternatives
 
-There are several great Windows widgets out there. Here's an honest comparison:
+There are several great usage tools out there now. Here's an honest comparison
+against the closest Windows peers:
 
-| | **Claude Meter** | [Zrnik](https://github.com/Zrnik/claude-usage-windows-taskbar-widget) | [sr-kai's claudeusagewin](https://github.com/sr-kai/claudeusagewin) | [CodeZeno](https://github.com/CodeZeno/Claude-Code-Usage-Monitor) |
-|---|:---:|:---:|:---:|:---:|
-| Stack | Python + PySide6 | C# / WPF | C# / WPF + WPF-UI | Rust + Win32 GDI |
-| Per-model breakdown (Sonnet/Opus/Design) | ✅ | ❌ (unified only) | ⚠️ (Sonnet only) | ❌ (unified only) |
-| Daily routine runs | ✅ | ❌ | ❌ | ❌ |
-| Overage tracking | ✅ (when API exposes) | ❌ | ✅ | ❌ |
-| Plan auto-detect | ✅ | ❌ | ✅ | ❌ |
-| Light Claude-brand theme | ✅ | ❌ | ⚠️ (Fluent dark/light) | ⚠️ (dark/light) |
-| Keeps last data on API errors | ✅ | ❌ | ⚠️ | ❌ |
-| Drop-in logo override | ✅ | ❌ | ❌ | ❌ |
-| End-user .exe size | ~70 MB | ~5 MB (needs .NET 8) | ~6 MB (needs .NET 8) | ~3 MB |
-| Multi-account | (roadmap) | ✅ | ❌ | ❌ |
+| | **Claude Meter** | [jens-duttke](https://github.com/jens-duttke/usage-monitor-for-claude) | [Zrnik](https://github.com/Zrnik/claude-usage-windows-taskbar-widget) | [sr-kai's claudeusagewin](https://github.com/sr-kai/claudeusagewin) | [CodeZeno](https://github.com/CodeZeno/Claude-Code-Usage-Monitor) |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Stack | Python + PySide6 | Python (single-EXE) | C# / WPF | C# / WPF + WPF-UI | Rust + Win32 GDI |
+| Per-model breakdown (Sonnet/Opus/Design) | ✅ | ✅ (Sonnet/Opus + extra) | ❌ (unified only) | ⚠️ (Sonnet only) | ❌ (unified only) |
+| Daily routine runs | ✅ | — | ❌ | ❌ | ❌ |
+| Overage tracking | ✅ (when API exposes) | ✅ | ❌ | ✅ | ❌ |
+| Plan auto-detect | ✅ | — | ❌ | ✅ | ❌ |
+| Light Claude-brand theme | ✅ | — | ❌ | ⚠️ (Fluent dark/light) | ⚠️ (dark/light) |
+| Keeps last data on API errors | ✅ | — | ❌ | ⚠️ | ❌ |
+| Time-aware alerts (fire when you outpace the clock) | (roadmap) | ✅ | ❌ | ❌ | ❌ |
+| Localization | (roadmap) | ✅ (12 languages) | ❌ | ❌ | ❌ |
+| Drop-in logo override | ✅ | ❌ | ❌ | ❌ | ❌ |
+| End-user .exe size | ~70 MB | Python single-EXE | ~5 MB (needs .NET 8) | ~6 MB (needs .NET 8) | ~3 MB |
+| Multi-account | (roadmap) | — | ✅ | ❌ | ❌ |
 
-If you want the absolute smallest binary, **CodeZeno's Rust version is great**. If you want multi-account side-by-side, **Zrnik's** is your tool. **Claude Meter** is for people who want the full `claude.ai/settings/usage` page replicated in their taskbar, with a quiet design that feels like Anthropic could have shipped it.
+The closest tool to this one is **[jens-duttke's usage-monitor-for-claude](https://github.com/jens-duttke/usage-monitor-for-claude)** — same idea (Windows tray, Python, zero-config auth from `~/.claude/.credentials.json`, per-model bars, adaptive polling with 429 backoff). It's excellent, and it does two things Meter doesn't yet: **time-aware alerts** (it warns you when you're burning faster than the clock, not just at fixed percentages) and **12-language localization**. If either matters to you, reach for it.
+
+A few more, depending on what you want:
+
+- **Smallest binary** — [CodeZeno's](https://github.com/CodeZeno/Claude-Code-Usage-Monitor) Rust version (~3 MB).
+- **Multi-account side-by-side** — [Zrnik's](https://github.com/Zrnik/claude-usage-windows-taskbar-widget).
+- **On a Mac** — [JohnDimou/ClaudeWatch](https://github.com/JohnDimou/ClaudeWatch) (menubar, last-24h behavioural insights), or [tddworks/ClaudeBar](https://github.com/tddworks/ClaudeBar) if you want Claude *and* Codex/Gemini quotas in one menubar.
+- **Cost reporting, not live quota** — [ryoppippi/ccusage](https://github.com/ryoppippi/ccusage) is the dominant CLI; it reads your local `~/.claude/projects/*.jsonl` logs to tally spend, which is a different (and complementary) job to watching your live limits.
+
+**Claude Meter** is for people who want the full `claude.ai/settings/usage` page replicated in their Windows taskbar — every quota row, plan auto-detected, last-good numbers kept when the API hiccups — with a quiet design that feels like Anthropic could have shipped it.
 
 ## How it works (for the curious)
 
