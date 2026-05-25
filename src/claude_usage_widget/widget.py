@@ -18,11 +18,13 @@ from typing import List, Optional
 from PySide6.QtCore import QEvent, QPoint, QRect, Qt, QTimer, Signal
 from PySide6.QtGui import (
     QAction,
+    QBrush,
     QColor,
     QContextMenuEvent,
     QFont,
     QFontMetrics,
     QGuiApplication,
+    QLinearGradient,
     QMouseEvent,
     QPainter,
     QPainterPath,
@@ -455,9 +457,15 @@ def _draw_compact_bar(
     color = QColor(theme.BRAND_CORAL_DARK) if error else theme.util_color(utilization)
     u = max(0.0, min(1.0, utilization))
     if u > 0:
+        fw = max(2, int(w * u))
         fg = QPainterPath()
-        fg.addRoundedRect(x, y, max(2, int(w * u)), h, h / 2, h / 2)
-        p.fillPath(fg, color)
+        fg.addRoundedRect(x, y, fw, h, h / 2, h / 2)
+        # Fleet look: a soft left-to-right gradient (lighter -> the status colour)
+        # gives the bar a glassy sheen instead of a flat fill.
+        grad = QLinearGradient(float(x), float(y), float(x + fw), float(y))
+        grad.setColorAt(0.0, color.lighter(132))
+        grad.setColorAt(1.0, color)
+        p.fillPath(fg, QBrush(grad))
 
 
 def _draw_row(

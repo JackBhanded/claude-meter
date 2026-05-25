@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`wsl.exe` no longer flashes a console window** on every refresh. Previously, each poll spawned a brief black window because the subprocess was inheriting parent-less console behaviour from `pythonw.exe`. Now uses `CREATE_NO_WINDOW` on all subprocess calls.
 - **Expired OAuth tokens are now visible.** When Anthropic returns 401 (typically overnight when Claude Code hasn't refreshed the token), the widget footer now shows a prominent red **"Session expired — run `claude` to refresh"** message and the warning dot turns red. Previously the widget silently kept showing the stale last-good data with only a subtle amber dot — easy to miss.
 
+### Added
+- **Single-instance guard.** Launching Claude Meter when it's already running now bows out quietly instead of opening a second copy — so a stray double-click does nothing.
+- **Gradient usage bars (fleet look).** The progress bars now fill with a soft left-to-right gradient for a glassy sheen, matching the rest of the fleet's new look. They still colour by utilization (blue → orange → red).
+
 ## [0.1.3] — 2026-05-19
 
 ### Fixed
