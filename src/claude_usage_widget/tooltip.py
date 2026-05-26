@@ -43,6 +43,12 @@ class TooltipPanel(QWidget):
         self._products: List[products.DetectedProduct] = []
         self._glass_enabled = False
         self.resize(400, 240)
+        # Keep the "resets in Xm" countdowns fresh while the panel sits open —
+        # otherwise they'd freeze at the last data poll and read stale.
+        from PySide6.QtCore import QTimer
+        self._tick = QTimer(self)
+        self._tick.setInterval(30000)
+        self._tick.timeout.connect(self.update)
 
     # ------------------------------------------------------------------
     def set_glass_enabled(self, enabled: bool) -> None:
@@ -54,8 +60,13 @@ class TooltipPanel(QWidget):
 
     def showEvent(self, event) -> None:
         super().showEvent(event)
+        self._tick.start()
         if self._glass_enabled:
             try_enable_glass_backdrop(int(self.winId()))
+
+    def hideEvent(self, event) -> None:
+        self._tick.stop()
+        super().hideEvent(event)
 
     # ------------------------------------------------------------------
     def update_data(
